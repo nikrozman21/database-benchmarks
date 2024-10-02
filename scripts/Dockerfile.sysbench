@@ -1,0 +1,12 @@
+# Use a newer base image
+FROM ubuntu:22.04
+
+# Install necessary packages
+RUN apt-get update && \
+    apt-get install -y \
+    sysbench \
+    default-mysql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set the entrypoint to the benchmarking script
+ENTRYPOINT ["/scripts/run_benchmarks.sh"]

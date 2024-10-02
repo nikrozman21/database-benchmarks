@@ -1,0 +1,60 @@
+services:
+  mariadb_2cpu_2gb:
+    image: mariadb:latest
+    container_name: mariadb_2cpu_2gb
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpwd
+    volumes:
+      - mariadb_data_2cpu_2gb:/var/lib/mysql
+    networks:
+      - benchmark-net
+    cpus: 2
+    mem_limit: 2g
+
+  mariadb_4cpu_4gb:
+    image: mariadb:latest
+    container_name: mariadb_4cpu_4gb
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpwd
+    volumes:
+      - mariadb_data_4cpu_4gb:/var/lib/mysql
+    networks:
+      - benchmark-net
+    cpus: 4
+    mem_limit: 4g
+
+  mariadb_8cpu_8gb:
+    image: mariadb:latest
+    container_name: mariadb_8cpu_8gb
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpwd
+    volumes:
+      - mariadb_data_8cpu_8gb:/var/lib/mysql
+    networks:
+      - benchmark-net
+    cpus: 8
+    mem_limit: 8g
+
+  sysbench:
+    build:
+      context: .
+      dockerfile: ./scripts/Dockerfile.sysbench
+    container_name: sysbench-benchmark
+    depends_on:
+      - mariadb_2cpu_2gb
+      - mariadb_4cpu_4gb
+      - mariadb_8cpu_8gb
+    volumes:
+      - ./scripts:/scripts
+      - ./output:/output
+    networks:
+      - benchmark-net
+
+volumes:
+  mariadb_data_2cpu_2gb:
+  mariadb_data_4cpu_4gb:
+  mariadb_data_8cpu_8gb:
+
+networks:
+  benchmark-net:
+    driver: bridge
